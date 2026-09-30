@@ -1,0 +1,14 @@
+# Build output
+tree
+tree_debug
+tree.exe
+tree_debug.exe
+tree_debug.dSYM/
+build/
+
+# Temporary files of Microsoft Word
+~$*
+
+# Operating-system files
+.DS_Store
+Thumbs.db

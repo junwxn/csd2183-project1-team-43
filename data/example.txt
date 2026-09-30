@@ -1,0 +1,14 @@
+# data/example.txt
+# The expected output of ./tree rb, ./tree avl, and ./tree map with this file
+# is in example_rb.expected, example_avl.expected, and example_map.expected.
+# The X blocks for rb and avl show one valid tree each; yours may differ.
+I 8 100
+I 3 200
+I 17 300
+I 3 999
+S 3
+S 10
+D 8
+S 8
+P
+X

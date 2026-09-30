@@ -1,0 +1,30 @@
+#!/bin/sh
+# Rejects a commit whose message does not end with a line that declares the
+# origin of its changes, as the assignment brief requires. Merge commits are
+# exempt. Enable it once in every clone with
+#
+#   git config core.hooksPath .githooks
+
+if [ -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
+  exit 0
+fi
+
+# The last line of the message that is neither empty nor a comment, ignoring
+# the diff that git commit --verbose appends below the scissors line.
+last=$(awk '/^# -+ >8 -+$/ { exit }
+            /^#/ { next }
+            { sub(/[ \t\r]+$/, "") }
+            NF { line = $0 }
+            END { print line }' "$1")
+
+if printf '%s\n' "$last" |
+    grep -Eq '^AI: (none|[^ ,]+\.md(, [^ ,]+\.md)*)$'; then
+  exit 0
+fi
+
+echo "Commit rejected: end the message with a line such as" >&2
+echo "  AI: none" >&2
+echo "  AI: 2026-10-02_chatgpt_rotation-bug.md" >&2
+echo "  AI: 2026-10-02_chatgpt_rotation-bug.md, 2026-10-04_claude_delete-cases.md" >&2
+echo "Your message was kept in .git/COMMIT_EDITMSG." >&2
+exit 1

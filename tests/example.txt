@@ -1,0 +1,12 @@
+# tests/example.txt
+# An example of a team test: deleting an absent key, and inserting a key
+# again after it has been deleted. Add your own tests to this directory.
+I 5 50
+D 7
+I 5 51
+S 5
+D 5
+S 5
+I 5 52
+S 5
+P
