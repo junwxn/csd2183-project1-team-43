@@ -1,0 +1,6 @@
+# tests/07_edge_cases.txt
+X
+I 5 50
+X
+D 5
+X
