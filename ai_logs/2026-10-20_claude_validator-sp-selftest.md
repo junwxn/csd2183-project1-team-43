@@ -4,7 +4,7 @@
 **Created:** 20/10/2026 2:52:05  
 **Updated:** 20/10/2026 15:17:52  
 **Exported:** 20/10/2026 15:43:38  
-**Link:** [https://claude.ai/chat/30ec3682-8654-442f-bd93-2bb723dab196](https://claude.ai/chat/30ec3682-8654-442f-bd93-2bb723dab196)  
+**Link:** [https://claude.ai/share/ec1f74fb-7ec0-4348-8bd1-72df36e34843] 
 
 ## User:
 
