@@ -1,0 +1,115 @@
+Validator Mutation Tests 
+ 
+=== Mutation 1: Disabled stderr (sanitizer) scan === 
+ok    map vs map
+ok    no tamper
+ok    benign_stderr
+ok    wrong_found_first
+ok    wrong_value
+ok    drop_first_s
+ok    drop_last_s
+ok    extra_s
+ok    change_p_key
+ok    stray
+ok    x_unsupported
+ok    no_newline
+ok    exit1
+ok    hang
+MISS  ubsan (exit=0, wanted exit 1 and line: FAIL tests/example.txt [rb]: sanitizer report: src/red_black_tree.cpp:123:45: runtime error: signed integer overflow)
+PASS
+MISS  asan (exit=0, wanted exit 1 and line: FAIL tests/example.txt [rb]: sanitizer report: ==4242==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010)
+PASS
+ok    broken reference
+ok    missing program
+2 miss(es)
+ 
+=== Mutation 2: Skipped line-count check === 
+Note: The MISS for extra_s here is due to the message check failing, not the exit code (it still exits 1). This proves the line-count branch produces the specific error message. 
+ok    map vs map
+ok    no tamper
+ok    benign_stderr
+ok    wrong_found_first
+ok    wrong_value
+ok    drop_first_s
+ok    drop_last_s
+MISS  extra_s (exit=1, wanted exit 1 and line: FAIL tests/example.txt [rb]: line count map=4 got=5)
+FAILED
+ok    change_p_key
+ok    stray
+ok    x_unsupported
+ok    no_newline
+ok    exit1
+ok    hang
+ok    ubsan
+ok    asan
+ok    broken reference
+ok    missing program
+1 miss(es)
+ 
+=== Mutation 3: Disabled 'unknown' (stray line) check === 
+ok    map vs map
+ok    no tamper
+ok    benign_stderr
+ok    wrong_found_first
+ok    wrong_value
+ok    drop_first_s
+ok    drop_last_s
+ok    extra_s
+ok    change_p_key
+MISS  stray (exit=0, wanted exit 1 and line: FAIL tests/example.txt [rb]: unexpected output line 'debug: hello')
+PASS
+MISS  x_unsupported (exit=0, wanted exit 1 and line: FAIL tests/example.txt [rb]: unexpected output line 'X unsupported')
+PASS
+ok    no_newline
+ok    exit1
+ok    hang
+ok    ubsan
+ok    asan
+ok    broken reference
+ok    missing program
+2 miss(es)
+ 
+=== Mutation 4: Disabled missing newline check === 
+ok    map vs map
+ok    no tamper
+ok    benign_stderr
+ok    wrong_found_first
+ok    wrong_value
+ok    drop_first_s
+ok    drop_last_s
+ok    extra_s
+ok    change_p_key
+ok    stray
+ok    x_unsupported
+MISS  no_newline (exit=0, wanted exit 1 and line: FAIL tests/example.txt [rb]: missing final newline)
+PASS
+ok    exit1
+ok    hang
+ok    ubsan
+ok    asan
+ok    broken reference
+ok    missing program
+1 miss(es)
+ 
+=== Mutation 5: Compare only found/absent (ignores exact values) === 
+ok    map vs map
+ok    no tamper
+ok    benign_stderr
+ok    wrong_found_first
+MISS  wrong_value (exit=1, wanted exit 1 and line: FAIL tests/example.txt:7 [rb]: map='S 5 found 50' got='S 5 found 51')
+FAIL tests/example.txt [rb]: line count map=4 got=4
+FAILED
+ok    drop_first_s
+ok    drop_last_s
+ok    extra_s
+ok    change_p_key
+ok    stray
+ok    x_unsupported
+ok    no_newline
+ok    exit1
+ok    hang
+ok    ubsan
+ok    asan
+ok    broken reference
+ok    missing program
+1 miss(es)
