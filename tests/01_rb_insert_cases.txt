@@ -1,0 +1,213 @@
+# tests/01_rb_insert_cases.txt
+# insert fixup cases 1, 2 and 3, left and right, plus inserts with no fixup and sorted input.
+# values are 10 times the key. (key = 10, value = 100)
+
+# no fixup: insert into an empty tree, then twice under a black parent.
+# expect: root 20 (B) alone, then 10 (R) and 30 (R) added as its children with no rotation.
+# catches: a new node inserted black, or the root not kept black.
+I 20 200
+X
+I 10 100
+X
+I 30 300
+X
+P
+D 10
+D 20
+D 30
+P
+
+# duplicate insert: inserting a key that is already there changes nothing and keeps the old value.
+# expect: S 20 finds 200, not 999; P still lists 10 20 30.
+# catches: a duplicate insert that overwrites the stored value or adds a second node.
+I 20 200
+I 10 100
+I 30 300
+I 20 999
+I 10 888
+S 20
+S 10
+P
+X
+D 10
+D 20
+D 30
+P
+
+# case 3 (left): black uncle, z is an outer (left-left) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+# catches: case 3 (left) rotating the wrong way or skipping the recolour.
+I 30 300
+I 20 200
+I 10 100
+X
+P
+D 10
+D 20
+D 30
+P
+
+# case 3 (right): mirror, z is an outer (right-right) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+# catches: case 3 (right) rotating the wrong way, or the mirror side reading the wrong uncle.
+I 10 100
+I 20 200
+I 30 300
+X
+P
+D 10
+D 20
+D 30
+P
+
+# case 2 then case 3 (left): z is an inner (left-right) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+# catches: case 2 (left) rotating the wrong way or not moving z up first, and a left rotation linking to the wrong side.
+I 30 300
+I 10 100
+I 20 200
+X
+S 20
+D 10
+D 20
+D 30
+P
+
+# case 2 then case 3 (right): mirror, z is an inner (right-left) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+# catches: case 2 (right) rotating the wrong way, and a right rotation linking to the wrong side.
+I 10 100
+I 30 300
+I 20 200
+X
+S 20
+D 10
+D 20
+D 30
+P
+
+# case 1 (left): red uncle 30, recolour only, below the root so the grandparent 20 must turn red.
+# expect: root 50 (B), children 20 (R), 80 (B); 10 (B) and 30 (B) as 20's children; 5 (R) as 10's left child.
+# catches: case 1 (left) not turning the grandparent red, or moving z to the parent instead of the grandparent.
+I 50 500
+I 20 200
+I 80 800
+I 10 100
+I 30 300
+I 5 50
+X
+D 5
+D 10
+D 20
+D 30
+D 50
+D 80
+P
+
+# case 1 (right): mirror, red uncle 70, recolour only, below the root so the grandparent 80 must turn red.
+# expect: root 50 (B), children 20 (B), 80 (R); 70 (B) and 90 (B) as 80's children; 95 (R) as 90's right child.
+# catches: case 1 (right) not turning the grandparent red, or the mirror side reading the wrong uncle.
+I 50 500
+I 80 800
+I 20 200
+I 90 900
+I 70 700
+I 95 950
+X
+D 95
+D 90
+D 80
+D 70
+D 50
+D 20
+P
+
+# case 1 then case 2 and case 3 (left): cormen et al. 2022 example, z moves up to 7.
+# expect: root 7 (B), children 2 (R), 11 (R).
+# catches: a fixup that stops after one step instead of looping, and a rotation losing a moved subtree's parent link.
+I 11 110
+I 2 20
+I 14 140
+I 1 10
+I 7 70
+I 15 150
+I 5 50
+I 8 80
+X
+I 4 40
+X
+P
+S 4
+S 7
+D 1
+D 2
+D 4
+D 5
+D 7
+D 8
+D 11
+D 14
+D 15
+P
+
+# case 1 then case 2 and case 3 (right): mirror of the example above (key k becomes 20 - k), z moves up to 13.
+# expect: root 13 (B), children 9 (R), 18 (R).
+# catches: a fixup that stops after one step instead of looping, on the right side, and rotations linking to the wrong side.
+I 9 90
+I 18 180
+I 6 60
+I 19 190
+I 13 130
+I 5 50
+I 15 150
+I 12 120
+X
+I 16 160
+X
+P
+S 16
+S 13
+D 5
+D 6
+D 9
+D 12
+D 13
+D 15
+D 16
+D 18
+D 19
+P
+
+# ascending inserts: repeated case 3 (right) and case 1 as the tree grows.
+# expect: root 20 (B), children 10 (B), 40 (R); 30 (B) and 60 (B) as 40's children; 50 (R) and 70 (R) as 60's children.
+# catches: left rotations at the root linking to the wrong side, and case 1 or case 3 mistakes on the right side.
+I 10 100
+I 20 200
+I 30 300
+I 40 400
+I 50 500
+I 60 600
+I 70 700
+X
+P
+D 10
+D 20
+D 30
+D 40
+D 50
+D 60
+D 70
+P
+
+# descending inserts: mirror, repeated case 3 (left) and case 1.
+# expect: root 60 (B), children 40 (R), 70 (B); 20 (B) and 50 (B) as 40's children; 10 (R) and 30 (R) as 20's children.
+# catches: right rotations at the root linking to the wrong side, case 1 or case 3 mistakes on the left side, and a destructor that leaks.
+I 70 700
+I 60 600
+I 50 500
+I 40 400
+I 30 300
+I 20 200
+I 10 100
+X
+P
