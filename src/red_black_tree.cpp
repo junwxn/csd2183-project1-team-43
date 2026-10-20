@@ -1,5 +1,3 @@
-// Your red-black tree. Every member function below is a stub that compiles
-// but does nothing useful yet; replace each one with your implementation.
 #include "red_black_tree.h"
 #include <algorithm>
 #include <utility>
