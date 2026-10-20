@@ -1,0 +1,198 @@
+# AVL LL, RR, LR and RL rotation testing
+# testing at the root and internal subtrees
+
+# Left heavy, root testing LL
+I 30 200
+I 20 300
+I 10 400
+P
+X
+S 10
+S 20
+S 30
+D 10
+D 20
+D 30
+
+# Right heavy, root testing RR
+I 10 200
+I 20 300
+I 30 400
+P
+X
+S 10
+S 20
+S 30
+D 10
+D 20
+D 30
+
+# Root has left child but child has right child testing LR
+I 30 200
+I 10 300
+I 20 400
+P
+X
+S 10
+S 20
+S 30
+D 10
+D 20
+D 30
+
+# Root has right child but child has left child testing RL
+I 10 200
+I 30 300
+I 20 400
+P
+X
+S 10
+S 20
+S 30
+D 10
+D 20
+D 30
+
+# Testing for LL in internal subtrees 
+# Base tree 50 : 25 , 75 | 25 : 10 , - | 75 : 60, 90
+# Insert 5
+# Expected 50 : 10, 75 | 10 : 5, 25 | 75 : 60, 90
+I 50 100
+I 25 200
+I 75 300
+I 10 400
+I 60 500
+I 90 600
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 60
+S 90
+I 5 700
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 60
+S 90
+S 5
+D 5
+D 10
+D 25
+D 50
+D 60
+D 75
+D 90
+
+# Testing for LR in internal subtrees
+# Base tree 50 : 25, 75 | 25 : 10, - | 75 : 60, 90
+# Insert 15
+# Expected 50 : 15, 75 | 15 : 10, 25 | 75 : 60, 90
+I 50 100
+I 25 200
+I 75 300
+I 10 400
+I 60 500
+I 90 600
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 60
+S 90
+I 15 700
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 60
+S 90
+S 15
+D 10
+D 15
+D 25
+D 50
+D 60
+D 75
+D 90
+
+# Testing for RR in internal subtrees
+# Base tree 50 : 25, 75 | 25 : 10, 30 | 75 : -, 90
+# Insert 95
+# Expected 50 : 25, 90 | 25 : 10, 30 | 90 : 75, 95
+I 50 100
+I 25 200
+I 75 300
+I 10 400
+I 30 500
+I 90 600
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 30
+S 90
+I 95 700
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 30
+S 90
+S 95
+D 10
+D 25
+D 30
+D 50
+D 75
+D 90
+D 95
+
+# Testing for RL in internal subtrees
+# Base tree 50 : 25, 75 | 25 : 10, 30 | 75 : -, 90
+# Insert 80
+# Expected 50 : 25, 80 | 25 : 10, 30 | 80 : 75, 90
+I 50 100
+I 25 200
+I 75 300
+I 10 400
+I 30 500
+I 90 600
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 30
+S 90
+I 80 700
+P
+X
+S 50
+S 25
+S 75
+S 10
+S 30
+S 90
+S 80
+D 10
+D 25
+D 30
+D 50
+D 75
+D 80
+D 90
