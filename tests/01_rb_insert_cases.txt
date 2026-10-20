@@ -1,0 +1,177 @@
+# tests/01_rb_insert_cases.txt
+# insert fixup cases 1, 2 and 3, left and right, plus inserts with no fixup and sorted input.
+# values are 10 times the key. (key = 10, value = 100)
+
+# no fixup: insert into an empty tree, then twice under a black parent.
+# expect: root 20 (B) alone, then 10 (R) and 30 (R) added as its children with no rotation.
+I 20 200
+X
+I 10 100
+X
+I 30 300
+X
+P
+D 10
+D 20
+D 30
+P
+
+# case 3 (left): black uncle, z is an outer (left-left) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+I 30 300
+I 20 200
+I 10 100
+X
+P
+D 10
+D 20
+D 30
+P
+
+# case 3 (right): mirror, z is an outer (right-right) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+I 10 100
+I 20 200
+I 30 300
+X
+P
+D 10
+D 20
+D 30
+P
+
+# case 2 then case 3 (left): z is an inner (left-right) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+I 30 300
+I 10 100
+I 20 200
+X
+S 20
+D 10
+D 20
+D 30
+P
+
+# case 2 then case 3 (right): mirror, z is an inner (right-left) child.
+# expect: root 20 (B), children 10 (R), 30 (R).
+I 10 100
+I 30 300
+I 20 200
+X
+S 20
+D 10
+D 20
+D 30
+P
+
+# case 1 (left): red uncle 30, recolour only.
+# expect: root 20 (B), children 10 (B), 30 (B); 5 (R) as 10's left child.
+I 20 200
+I 10 100
+I 30 300
+I 5 50
+X
+D 5
+D 10
+D 20
+D 30
+P
+
+# case 1 (right): mirror, red uncle 10, recolour only.
+# expect: root 20 (B), children 10 (B), 30 (B); 40 (R) as 30's right child.
+I 20 200
+I 10 100
+I 30 300
+I 40 400
+X
+D 40
+D 10
+D 20
+D 30
+P
+
+# case 1 then case 2 and case 3 (left): cormen et al. 2022 example, z moves up to 7.
+# expect: root 7 (B), children 2 (R), 11 (R).
+I 11 110
+I 2 20
+I 14 140
+I 1 10
+I 7 70
+I 15 150
+I 5 50
+I 8 80
+X
+I 4 40
+X
+P
+S 4
+S 7
+D 1
+D 2
+D 4
+D 5
+D 7
+D 8
+D 11
+D 14
+D 15
+P
+
+# case 1 then case 2 and case 3 (right): mirror of the example above (key k becomes 20 - k), z moves up to 13.
+# expect: root 13 (B), children 9 (R), 18 (R).
+I 9 90
+I 18 180
+I 6 60
+I 19 190
+I 13 130
+I 5 50
+I 15 150
+I 12 120
+X
+I 16 160
+X
+P
+S 16
+S 13
+D 5
+D 6
+D 9
+D 12
+D 13
+D 15
+D 16
+D 18
+D 19
+P
+
+# ascending inserts: repeated case 3 (right) and case 1 as the tree grows.
+# expect: root 20 (B), children 10 (B), 40 (R); 30 (B) and 60 (B) as 40's children; 50 (R) and 70 (R) as 60's children.
+I 10 100
+I 20 200
+I 30 300
+I 40 400
+I 50 500
+I 60 600
+I 70 700
+X
+P
+D 10
+D 20
+D 30
+D 40
+D 50
+D 60
+D 70
+P
+
+# descending inserts: mirror, repeated case 3 (left) and case 1.
+# expect: root 60 (B), children 40 (R), 70 (B); 20 (B) and 50 (B) as 40's children; 10 (R) and 30 (R) as 20's children.
+I 70 700
+I 60 600
+I 50 500
+I 40 400
+I 30 300
+I 20 200
+I 10 100
+X
+P
