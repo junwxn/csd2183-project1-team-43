@@ -12,3 +12,7 @@ build/
 # Operating-system files
 .DS_Store
 Thumbs.db
+
+# from python scripts
+__pycache__/
+*.pyc
