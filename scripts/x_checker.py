@@ -8,6 +8,9 @@ class TreeError(Exception): pass
 INT_RE = re.compile(r"0|-?[1-9][0-9]*")
 MIN_INT64, MAX_INT64 = -2**63, 2**63 - 1
 
+def is_int64(s):
+    return bool(INT_RE.fullmatch(s)) and MIN_INT64 <= int(s) <= MAX_INT64
+
 def parse_tree(lines, kind):
     if kind not in {"rb", "avl"}:
         raise ValueError(f"invalid tree kind: {kind}")
@@ -35,7 +38,7 @@ def parse_tree(lines, kind):
             key_str = parts[1]
             if key_str == "-":
                 root_key = "-"
-            elif INT_RE.fullmatch(key_str) and MIN_INT64 <= int(key_str) <= MAX_INT64:
+            elif is_int64(key_str):
                 root_key = int(key_str)
             else:
                 raise TreeError(f"invalid root key format or bounds: {key_str}")
@@ -52,7 +55,7 @@ def parse_tree(lines, kind):
                 raise TreeError("node key cannot be '-'")
 
             for s in (key_str, left_str, right_str):
-                if s != "-" and not (INT_RE.fullmatch(s) and MIN_INT64 <= int(s) <= MAX_INT64):
+                if s != "-" and not is_int64(s):
                     raise TreeError(f"invalid key or child format/bounds: {s}")
 
             key = int(key_str)

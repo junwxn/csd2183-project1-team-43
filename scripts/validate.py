@@ -53,29 +53,19 @@ def run(kind, path):
 def split(out, kind):
     x_ok = X_UNSUPPORTED if kind == "map" else X_SHAPE
     sp, unknown, x_blocks = [], [], []
-    current_x = []
+    current_x = None
     
     for line in out.splitlines():
         if SP.fullmatch(line):
-            if current_x:
-                x_blocks.append(current_x)
-                current_x = []
             sp.append(line)
+            current_x = None
         elif not x_ok.fullmatch(line):
             unknown.append(line)
+        elif kind == "map" or line.startswith("root ") or current_x is None:
+            current_x = [line]
+            x_blocks.append(current_x)
         else:
-            if kind == "map":
-                x_blocks.append([line])
-            else:
-                if line.startswith("root "):
-                    if current_x:
-                        x_blocks.append(current_x)
-                    current_x = [line]
-                else:
-                    current_x.append(line)
-                    
-    if current_x:
-        x_blocks.append(current_x)
+            current_x.append(line)
         
     return sp, unknown, x_blocks
 
