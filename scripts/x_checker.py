@@ -130,7 +130,7 @@ def validate(kind, root, nodes):
             return 0, bhl + 1
 
     try:
-        dfs(root, MIN_INT64, MAX_INT64)
+        dfs(root, MIN_INT64 - 1, MAX_INT64 + 1)
     except RecursionError:
         raise TreeError("recursion limit exceeded (degenerate tree)")
 

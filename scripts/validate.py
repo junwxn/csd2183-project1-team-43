@@ -23,7 +23,6 @@ X_UNSUPPORTED = re.compile(r"X unsupported")
 X_SHAPE = re.compile(rf"root (?:{INT}|-)"
                      rf"|{INT} (?:R|B|-1|0|1) (?:{INT}|-) (?:{INT}|-)")
 
-
 def get_expected_x_states(path):
     expected_keys = set()
     states = []
@@ -44,7 +43,6 @@ def get_expected_x_states(path):
                 print(f"ERROR {path}:{lineno}: unknown command {cmd}")
                 sys.exit(2)
     return states
-
 
 def run(kind, path):
     result = subprocess.run([BIN, kind, path], capture_output=True,
