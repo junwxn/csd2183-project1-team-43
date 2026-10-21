@@ -1,5 +1,5 @@
 #!/bin/bash
-cd "$(dirname "$0")/.." || exit 2
+cd "$(dirname "$0")/../.." || exit 2
 FILE=tests/example.txt
 fails=0
 UBSAN="src/red_black_tree.cpp:123:45: runtime error: signed integer overflow"

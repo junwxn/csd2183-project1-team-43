@@ -1,5 +1,6 @@
 Validator Mutation Tests 
- 
+
+=== selftest.sh ===	
 === Mutation 1: Disabled stderr (sanitizer) scan === 
 ok    map vs map
 ok    no tamper
@@ -113,3 +114,306 @@ ok    asan
 ok    broken reference
 ok    missing program
 1 miss(es)
+
+=== test_parser.sh ===
+=== Mutation 1: Disabled blank line check === 
+ok    missing_root
+ok    two_roots
+ok    root_3_fields
+ok    node_before_root
+ok    node_3_fields
+ok    key_dash
+ok    key_leading_zero
+ok    key_minus_zero
+ok    key_overflow
+ok    descending_keys
+ok    duplicate_key
+ok    root_dash_with_nodes
+ok    root_not_in_nodes
+ok    same_child_twice
+ok    self_child
+MISS  blank_line (exit=0, wanted exit 1 and line: blank line encountered)
+PASS
+ok    comment_line
+ok    node_key_leading_zero
+ok    node_key_minus_zero
+ok    node_key_overflow
+ok    node_child_overflow
+ok    node_child_non_numeric
+ok    wrong_attr_rb
+ok    wrong_attr_avl
+ok    double_space
+ok    trailing_space
+1 miss(es)
+ 
+=== Mutation 2: Merged duplicate and ascending checks === 
+ok    missing_root
+ok    two_roots
+ok    root_3_fields
+ok    node_before_root
+ok    node_3_fields
+ok    key_dash
+ok    key_leading_zero
+ok    key_minus_zero
+ok    key_overflow
+ok    descending_keys
+MISS  duplicate_key (exit=1, wanted exit 1 and line: duplicate key 5)
+FAIL: node lines not ascending: 5 then 5
+ok    root_dash_with_nodes
+ok    root_not_in_nodes
+ok    same_child_twice
+ok    self_child
+ok    blank_line
+ok    comment_line
+ok    node_key_leading_zero
+ok    node_key_minus_zero
+ok    node_key_overflow
+ok    node_child_overflow
+ok    node_child_non_numeric
+ok    wrong_attr_rb
+ok    wrong_attr_avl
+ok    double_space
+ok    trailing_space
+1 miss(es)
+ 
+=== Mutation 3: Disabled tree kind attribute checks === 
+ok    missing_root
+ok    two_roots
+ok    root_3_fields
+ok    node_before_root
+ok    node_3_fields
+ok    key_dash
+ok    key_leading_zero
+ok    key_minus_zero
+ok    key_overflow
+ok    descending_keys
+ok    duplicate_key
+ok    root_dash_with_nodes
+ok    root_not_in_nodes
+ok    same_child_twice
+ok    self_child
+ok    blank_line
+ok    comment_line
+ok    node_key_leading_zero
+ok    node_key_minus_zero
+ok    node_key_overflow
+ok    node_child_overflow
+ok    node_child_non_numeric
+MISS  wrong_attr_rb (exit=1, wanted exit 1 and line: invalid RB attribute '1')
+FAIL: root 5 is not black
+MISS  wrong_attr_avl (exit=1, wanted exit 1 and line: invalid AVL attribute 'R')
+Traceback (most recent call last):
+  File "/mnt/c/Users/MeowNads/Documents/Y2/Y2T1/CSD 2183_Data Structures/Project ONE repo/scripts/x_checker.py", line 144, in <module>
+    validate(sys.argv[1], root_key, parsed_nodes)
+  File "/mnt/c/Users/MeowNads/Documents/Y2/Y2T1/CSD 2183_Data Structures/Project ONE repo/scripts/x_checker.py", line 133, in validate
+    dfs(root, MIN_INT64, MAX_INT64)
+  File "/mnt/c/Users/MeowNads/Documents/Y2/Y2T1/CSD 2183_Data Structures/Project ONE repo/scripts/x_checker.py", line 118, in dfs
+    if int(attr) != bf:
+       ^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'R'
+ok    double_space
+ok    trailing_space
+2 miss(es)
+
+=== test_traversal.sh ===
+=== Mutation 1: Disabled cycle / visited check ===
+=== Valid Controls ===
+ok    rb_valid_empty
+ok    rb_valid_single
+ok    rb_valid_mixed
+ok    rb_valid_deep
+ok    avl_valid_empty
+ok    avl_valid_single
+ok    avl_valid_multi
+ok    avl_valid_tall
+=== Traversal & Structural Rules ===
+ok    dangling_child
+MISS  shared_child (exit=1, wanted exit 1 and line: cycle or shared child at 3)
+FAIL: BST violation at 3 (not in range 5 to 8)
+MISS  cycle (exit=1, wanted exit 1 and line: cycle or shared child at 5)
+FAIL: BST violation at 5 (not in range 5 to 8)
+ok    unreachable_node
+ok    bst_violation_deep
+ok    bst_violation_deep_right
+ok    unreachable_cycle
+ok    dangling_child_deep
+=== Red-Black Rules ===
+ok    rb_red_root
+ok    rb_red_red
+ok    rb_unequal_black
+ok    rb_red_red_left
+ok    rb_unequal_deep
+ok    rb_unequal_red_involved
+ok    rb_combined_same_node
+=== AVL Rules ===
+ok    avl_wrong_factor
+ok    avl_unbalanced
+ok    avl_wrong_factor_deep
+ok    avl_wrong_sign
+ok    avl_unbalanced_right
+ok    avl_wrong_root_only
+2 miss(es)
+ 
+=== Mutation 2: Disabled BST lower bound check === 
+=== Valid Controls ===
+ok    rb_valid_empty
+ok    rb_valid_single
+ok    rb_valid_mixed
+ok    rb_valid_deep
+ok    avl_valid_empty
+ok    avl_valid_single
+ok    avl_valid_multi
+ok    avl_valid_tall
+=== Traversal & Structural Rules ===
+ok    dangling_child
+ok    shared_child
+ok    cycle
+ok    unreachable_node
+ok    bst_violation_deep
+MISS  bst_violation_deep_right (exit=1, wanted exit 1 and line: BST violation at 5)
+FAIL: red node 15 has red child 5
+ok    unreachable_cycle
+ok    dangling_child_deep
+=== Red-Black Rules ===
+ok    rb_red_root
+ok    rb_red_red
+ok    rb_unequal_black
+ok    rb_red_red_left
+ok    rb_unequal_deep
+ok    rb_unequal_red_involved
+ok    rb_combined_same_node
+=== AVL Rules ===
+ok    avl_wrong_factor
+ok    avl_unbalanced
+ok    avl_wrong_factor_deep
+ok    avl_wrong_sign
+ok    avl_unbalanced_right
+ok    avl_wrong_root_only
+1 miss(es)
+ 
+=== Mutation 3: Reversed AVL balance factor sign === 
+=== Valid Controls ===
+ok    rb_valid_empty
+ok    rb_valid_single
+ok    rb_valid_mixed
+ok    rb_valid_deep
+ok    avl_valid_empty
+ok    avl_valid_single
+MISS  avl_valid_multi (exit=1, wanted exit 1 and line: PASS)
+FAIL: node 8: stated factor -1, true factor 1
+MISS  avl_valid_tall (exit=1, wanted exit 1 and line: PASS)
+FAIL: node 5: stated factor -1, true factor 1
+=== Traversal & Structural Rules ===
+ok    dangling_child
+ok    shared_child
+ok    cycle
+ok    unreachable_node
+ok    bst_violation_deep
+ok    bst_violation_deep_right
+ok    unreachable_cycle
+ok    dangling_child_deep
+=== Red-Black Rules ===
+ok    rb_red_root
+ok    rb_red_red
+ok    rb_unequal_black
+ok    rb_red_red_left
+ok    rb_unequal_deep
+ok    rb_unequal_red_involved
+ok    rb_combined_same_node
+=== AVL Rules ===
+MISS  avl_wrong_factor (exit=1, wanted exit 1 and line: node 5: stated factor 0, true factor 1)
+FAIL: node 5: stated factor 0, true factor -1
+MISS  avl_unbalanced (exit=1, wanted exit 1 and line: node 5: stated factor 0, true factor -2 (unbalanced))
+FAIL: node 3: stated factor -1, true factor 1
+MISS  avl_wrong_factor_deep (exit=1, wanted exit 1 and line: node 15: stated factor 1, true factor -1)
+FAIL: node 10: stated factor 1, true factor -1
+MISS  avl_wrong_sign (exit=0, wanted exit 1 and line: node 5: stated factor -1, true factor 1)
+PASS
+MISS  avl_unbalanced_right (exit=1, wanted exit 1 and line: node 5: stated factor 0, true factor 2 (unbalanced))
+FAIL: node 8: stated factor 1, true factor -1
+ok    avl_wrong_root_only
+7 miss(es)
+ 
+=== Mutation 4: Disabled AVL height +1 propagation === 
+=== Valid Controls ===
+ok    rb_valid_empty
+ok    rb_valid_single
+ok    rb_valid_mixed
+ok    rb_valid_deep
+ok    avl_valid_empty
+ok    avl_valid_single
+MISS  avl_valid_multi (exit=1, wanted exit 1 and line: PASS)
+FAIL: node 8: stated factor -1, true factor 0
+MISS  avl_valid_tall (exit=1, wanted exit 1 and line: PASS)
+FAIL: node 5: stated factor -1, true factor 0
+=== Traversal & Structural Rules ===
+ok    dangling_child
+ok    shared_child
+ok    cycle
+ok    unreachable_node
+ok    bst_violation_deep
+ok    bst_violation_deep_right
+ok    unreachable_cycle
+ok    dangling_child_deep
+=== Red-Black Rules ===
+ok    rb_red_root
+ok    rb_red_red
+ok    rb_unequal_black
+ok    rb_red_red_left
+ok    rb_unequal_deep
+ok    rb_unequal_red_involved
+ok    rb_combined_same_node
+=== AVL Rules ===
+MISS  avl_wrong_factor (exit=0, wanted exit 1 and line: node 5: stated factor 0, true factor 1)
+PASS
+MISS  avl_unbalanced (exit=1, wanted exit 1 and line: node 5: stated factor 0, true factor -2 (unbalanced))
+FAIL: node 3: stated factor -1, true factor 0
+MISS  avl_wrong_factor_deep (exit=1, wanted exit 1 and line: node 15: stated factor 1, true factor -1)
+FAIL: node 15: stated factor 1, true factor 0
+MISS  avl_wrong_sign (exit=1, wanted exit 1 and line: node 5: stated factor -1, true factor 1)
+FAIL: node 5: stated factor -1, true factor 0
+MISS  avl_unbalanced_right (exit=1, wanted exit 1 and line: node 5: stated factor 0, true factor 2 (unbalanced))
+FAIL: node 8: stated factor 1, true factor 0
+ok    avl_wrong_root_only
+7 miss(es)
+ 
+=== Mutation 5: Red nodes counted towards black-height === 
+=== Valid Controls ===
+ok    rb_valid_empty
+ok    rb_valid_single
+ok    rb_valid_mixed
+MISS  rb_valid_deep (exit=1, wanted exit 1 and line: PASS)
+FAIL: node 20: left black-height 1, right black-height 2
+ok    avl_valid_empty
+ok    avl_valid_single
+ok    avl_valid_multi
+ok    avl_valid_tall
+=== Traversal & Structural Rules ===
+ok    dangling_child
+ok    shared_child
+ok    cycle
+ok    unreachable_node
+ok    bst_violation_deep
+ok    bst_violation_deep_right
+ok    unreachable_cycle
+ok    dangling_child_deep
+=== Red-Black Rules ===
+ok    rb_red_root
+MISS  rb_red_red (exit=1, wanted exit 1 and line: red node 5 has red child 8)
+FAIL: node 5: left black-height 1, right black-height 2
+ok    rb_unequal_black
+MISS  rb_red_red_left (exit=1, wanted exit 1 and line: red node 10 has red child 5)
+FAIL: node 10: left black-height 2, right black-height 1
+ok    rb_unequal_deep
+MISS  rb_unequal_red_involved (exit=0, wanted exit 1 and line: node 10: left black-height 1, right black-height 2)
+PASS
+MISS  rb_combined_same_node (exit=1, wanted exit 1 and line: node 10: left black-height 1, right black-height 2)
+FAIL: red node 10 has red child 5
+=== AVL Rules ===
+ok    avl_wrong_factor
+ok    avl_unbalanced
+ok    avl_wrong_factor_deep
+ok    avl_wrong_sign
+ok    avl_unbalanced_right
+ok    avl_wrong_root_only
+5 miss(es)

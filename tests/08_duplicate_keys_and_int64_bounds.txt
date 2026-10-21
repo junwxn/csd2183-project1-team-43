@@ -1,0 +1,115 @@
+# Target: int64 key and value limits, comparison overflow, int32 truncation, duplicate keys keeping the old value, deletes at the extremes.
+
+# 0. Search for both extremes on an empty tree, before any insert.
+# State: {}  map prints: S max absent, S min absent
+S 9223372036854775807
+S -9223372036854775808
+
+# 1. Insert both extremes. A comparison written as a - b overflows when these two are compared.
+# State: {max, min}
+I 9223372036854775807 1
+I -9223372036854775808 2
+X
+
+# 2. Duplicate inserts on both extremes: the new values (77 and 88) must be ignored.
+# State: {max, min}  map prints: S max found 1, S min found 2
+I 9223372036854775807 77
+S 9223372036854775807
+I -9223372036854775808 88
+S -9223372036854775808
+
+# 3. Keys next to the extremes and the middle, compared against both extremes. Search the new neighbours to check the inserts.
+# State: {min, -max, -1, 0, 1, max-1, max}  map prints: P with all seven keys, S max-1 found 6, S -max found 7
+I 0 3
+I -1 4
+I 1 5
+I 9223372036854775806 6
+I -9223372036854775807 7
+X
+P
+S 9223372036854775806
+S -9223372036854775807
+
+# 4. Values at the int64 limits, not only keys.
+# State: adds 100 and 101  map prints: S 100 found -9223372036854775808, S 101 found 9223372036854775807
+I 100 -9223372036854775808
+I 101 9223372036854775807
+S 100
+S 101
+
+# 5. Delete both extremes and the middle key, then check the tree: removed keys are absent, survivors are still found, the shape is valid, and P prints in ascending order.
+# State: {min, -max, -1, 0, 1, 100, 101, max-1, max} -> {-max, -1, 1, 100, 101, max-1}
+# map prints: S max absent, S min absent, S 0 absent, S max-1 found 6, S -max found 7, P -max -1 1 100 101 max-1
+D 9223372036854775807
+D -9223372036854775808
+D 0
+S 9223372036854775807
+S -9223372036854775808
+S 0
+S 9223372036854775806
+S -9223372036854775807
+X
+P
+
+# 6. Delete an extreme key that is already gone: an absent delete that must leave the tree unchanged. The tree stays non-empty, so the destructor frees a populated tree under the sanitizer.
+# State: {-max, -1, 1, 100, 101, max-1}, unchanged
+D 9223372036854775807
+X
+
+# 7. Duplicate insert in a multi-node tree: the new value (555) must be ignored and no rebalancing side effects.
+# State: {-max, -1, 1, 100, 101, max-1}, unchanged  map prints: S 100 found -9223372036854775808
+I 100 555
+S 100
+X
+
+# 8. Keys past the int32 limits, away from the extremes. 4294967296 equals 0 after truncation to 32 bits, and 2147483648 equals -2147483648.
+# 4294967296 goes in first, so a colliding 0 would be treated as a duplicate and S 0 would show value 1.
+# State: adds 4294967296, 0, 2147483648, -2147483649
+# map prints: S 4294967296 found 1, S 0 found 2, S 2147483648 found 3, S -2147483649 found 4, P -max -2147483649 -1 0 1 100 101 2147483648 4294967296 max-1
+I 4294967296 1
+I 0 2
+I 2147483648 3
+I -2147483649 4
+S 4294967296
+S 0
+S 2147483648
+S -2147483649
+P
+X
+
+# 9. Drain all ten keys so the next tree starts empty.
+# State: {10 keys} -> {}  map prints: S 0 absent, P
+D -9223372036854775807
+D -2147483649
+D -1
+D 0
+D 1
+D 100
+D 101
+D 2147483648
+D 4294967296
+D 9223372036854775806
+S 0
+P
+X
+
+# 10. Ascending run at the minimum on an empty tree: the third insert forces a rotation where every comparison involves an extreme key.
+# State: {} -> {min, min+1, min+2}  map prints: S min+1 found 2, P min min+1 min+2
+I -9223372036854775808 1
+I -9223372036854775807 2
+I -9223372036854775806 3
+S -9223372036854775807
+P
+X
+
+# 11. Drain, then a descending run at the maximum on an empty tree (the mirror rotation). The tree stays populated at the end.
+# State: {min, min+1, min+2} -> {} -> {max-2, max-1, max}  map prints: S max-1 found 5, P max-2 max-1 max
+D -9223372036854775808
+D -9223372036854775807
+D -9223372036854775806
+I 9223372036854775807 4
+I 9223372036854775806 5
+I 9223372036854775805 6
+S 9223372036854775806
+P
+X
