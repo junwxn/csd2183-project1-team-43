@@ -1,1 +1,307 @@
 # tests/02_rb_delete_fixup.txt
+# delete fixup cases 1 to 4, left and right. each deleted node is a black leaf.
+
+# case 2 (left): delete 10, black sibling 30 has black children.
+# expect: root 20 (B), right child 30 (R).
+# catches: a delete fixup that is skipped, or that runs when the removed node was red.
+I 20 200
+I 10 100
+I 30 300
+I 40 400
+D 40
+X
+D 10
+X
+P
+D 20
+D 30
+P
+
+# case 2 (right): mirror, delete 30, black sibling 10 has black children.
+# expect: root 20 (B), left child 10 (R).
+# catches: a delete fixup that is skipped or runs when it should not, and the mirror side reading the wrong sibling.
+I 20 200
+I 10 100
+I 30 300
+I 5 50
+D 5
+X
+D 30
+X
+P
+D 10
+D 20
+P
+
+# case 4 (left): delete 10, black sibling 30 has a red far child 40.
+# expect: root 30 (B), children 20 (B), 40 (B).
+# catches: case 4 (left) not blackening the far nephew, or not ending the loop.
+I 20 200
+I 10 100
+I 30 300
+I 40 400
+X
+D 10
+X
+S 30
+D 20
+D 30
+D 40
+P
+
+# case 4 (right): mirror, delete 30, black sibling 10 has a red far child 5.
+# expect: root 10 (B), children 5 (B), 20 (B).
+# catches: case 4 (right) blackening the wrong nephew, or the mirror side reading the wrong sibling.
+I 20 200
+I 10 100
+I 30 300
+I 5 50
+X
+D 30
+X
+S 10
+D 5
+D 10
+D 20
+P
+
+# case 3 then case 4 (left): delete 10, black sibling 30 has a red near child 25.
+# expect: root 25 (B), children 20 (B), 30 (B).
+# catches: case 4 (left) mistakes after case 3, and a right rotation linking to the wrong side.
+I 20 200
+I 10 100
+I 30 300
+I 25 250
+X
+D 10
+X
+S 25
+D 20
+D 25
+D 30
+P
+
+# case 3 then case 4 (right): mirror, delete 30, black sibling 10 has a red near child 15.
+# expect: root 15 (B), children 10 (B), 20 (B).
+# catches: case 3 (right) rotating the wrong way, and case 4 (right) blackening the wrong nephew.
+I 20 200
+I 10 100
+I 30 300
+I 15 150
+X
+D 30
+X
+S 15
+D 10
+D 15
+D 20
+P
+
+# case 1 then case 2 (left): delete 10, sibling 30 is red.
+# expect: root 30 (B), children 20 (B), 40 (B); 25 (R) as 20's right child, 45 (R) as 40's right child.
+# catches: case 1 (left) not refreshing the sibling after rotating, case 2 not moving the extra black up, and a missing final recolour of x.
+I 20 200
+I 10 100
+I 30 300
+I 40 400
+I 25 250
+I 45 450
+X
+D 10
+X
+P
+D 20
+D 25
+D 30
+D 40
+D 45
+P
+
+# case 1 then case 2 (right): mirror, delete 30, sibling 10 is red.
+# expect: root 10 (B), children 5 (B), 20 (B); 1 (R) as 5's left child, 15 (R) as 20's left child.
+# catches: case 2 (right) not moving the extra black up, the mirror side reading the wrong sibling, and a missing final recolour of x.
+I 20 200
+I 10 100
+I 30 300
+I 5 50
+I 15 150
+I 1 10
+X
+D 30
+X
+P
+D 1
+D 5
+D 10
+D 15
+D 20
+P
+
+# case 1 then case 3 then case 4 (left): delete 10, sibling 50 is red, new sibling 40 has a red near child 30.
+# expect: root 50 (B), children 30 (R), 60 (B); 20 (B) and 40 (B) as 30's children.
+# catches: case 1 or case 3 (left) not refreshing the sibling, case 4 (left) mistakes, and a left rotation losing a subtree's parent link.
+I 60 600
+I 20 200
+I 10 100
+I 50 500
+I 40 400
+I 30 300
+X
+D 10
+X
+P
+D 20
+D 30
+D 40
+D 50
+D 60
+P
+
+# case 1 then case 3 then case 4 (right): mirror, delete 60, sibling 20 is red, new sibling 30 has a red near child 40.
+# expect: root 20 (B), children 10 (B), 40 (R); 30 (B) and 50 (B) as 40's children.
+# catches: case 3 (right) rotating the wrong way, case 4 (right) blackening the wrong nephew, and a right rotation losing a subtree's parent link.
+I 10 100
+I 50 500
+I 60 600
+I 20 200
+I 30 300
+I 40 400
+X
+D 60
+X
+P
+D 10
+D 20
+D 30
+D 40
+D 50
+P
+
+# case 1 then case 4 (left): delete 10, sibling 50 is red, new sibling 30 has a red far child 40.
+# expect: root 50 (B), children 30 (R), 60 (B); 20 (B) and 40 (B) as 30's children.
+# catches: case 1 (left) not refreshing the sibling, and case 4 (left) not blackening the far nephew or not ending the loop.
+I 20 200
+I 10 100
+I 50 500
+I 30 300
+I 60 600
+I 40 400
+X
+D 10
+X
+P
+D 20
+D 30
+D 40
+D 50
+D 60
+P
+
+# case 1 then case 4 (right): mirror, delete 60, sibling 20 is red, new sibling 40 has a red far child 30.
+# expect: root 20 (B), children 10 (B), 40 (R); 30 (B) and 50 (B) as 40's children.
+# catches: case 4 (right) blackening the wrong nephew, and the mirror side reading the wrong sibling.
+I 50 500
+I 60 600
+I 20 200
+I 40 400
+I 10 100
+I 30 300
+X
+D 60
+X
+P
+D 10
+D 20
+D 30
+D 40
+D 50
+P
+
+# case 2 three times up to the root (left): insert 10 to 220, delete the red nodes to leave an all-black 15-node tree, then delete 10.
+# expect: root 80 (B); 30, 60 and 120 turn red, every other node stays black.
+# catches: case 2 (left) not moving the extra black up; the deletes that build the tree also catch successor-splicing bugs.
+I 10 100
+I 20 200
+I 30 300
+I 40 400
+I 50 500
+I 60 600
+I 70 700
+I 80 800
+I 90 900
+I 100 1000
+I 110 1100
+I 120 1200
+I 130 1300
+I 140 1400
+I 150 1500
+I 160 1600
+I 170 1700
+I 180 1800
+I 190 1900
+I 200 2000
+I 210 2100
+I 220 2200
+D 220
+D 200
+D 190
+D 160
+D 210
+D 140
+D 130
+X
+D 10
+X
+P
+D 20
+D 30
+D 40
+D 50
+D 60
+D 70
+D 80
+D 90
+D 100
+D 110
+D 120
+D 150
+D 170
+D 180
+P
+
+# case 2 three times up to the root (right): mirror, same all-black 15-node tree, then delete 180.
+# expect: root 80 (B); 40, 100 and 150 turn red, every other node stays black.
+# catches: case 2 (right) not moving the extra black up, successor-splicing bugs, and a destructor that leaks.
+I 10 100
+I 20 200
+I 30 300
+I 40 400
+I 50 500
+I 60 600
+I 70 700
+I 80 800
+I 90 900
+I 100 1000
+I 110 1100
+I 120 1200
+I 130 1300
+I 140 1400
+I 150 1500
+I 160 1600
+I 170 1700
+I 180 1800
+I 190 1900
+I 200 2000
+I 210 2100
+I 220 2200
+D 220
+D 200
+D 190
+D 160
+D 210
+D 140
+D 130
+X
+D 180
+X
+P

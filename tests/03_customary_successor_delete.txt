@@ -1,1 +1,336 @@
-# tests/03_customary_sucessor_delete.txt
+# tests/03_customary_successor_delete.txt
+# deleting a node with two children replaces it with its successor (minimum of the right subtree).
+# also deletes a node with only a left child, keys that are not in the tree, and the maximum or minimum until empty.
+
+# successor is the right child: delete 20, successor 30 is a leaf.
+# expect: root 30 (B), left child 10 (R).
+# catches: the successor not adopting z's left subtree or z's colour, and the fixup decision using z's colour instead of the successor's.
+I 20 200
+I 10 100
+I 30 300
+X
+D 20
+X
+S 20
+S 30
+D 10
+D 30
+P
+
+# successor is the right child with its own right child: delete 20, successor 30, 40 moves up.
+# expect: root 30 (B), children 10 (B), 40 (B).
+# catches: the successor's red right child not turning black, and the fixup being skipped.
+I 20 200
+I 10 100
+I 30 300
+I 40 400
+X
+D 20
+X
+S 20
+S 30
+S 40
+D 10
+D 30
+D 40
+P
+
+# successor deeper in the right subtree: delete 20, successor 25 is the leftmost node under 30.
+# expect: root 25 (B), children 10 (B), 30 (B).
+# catches: always using z's right child as the successor, and the successor not taking z's colour.
+I 20 200
+I 10 100
+I 30 300
+I 25 250
+X
+D 20
+X
+S 20
+S 25
+D 10
+D 25
+D 30
+P
+
+# successor deeper with its own right child: delete 20, successor 30, 35 moves up.
+# expect: root 30 (B), children 10 (B), 40 (R); 35 (B) as 40's left child, 50 (B) as 40's right child.
+# catches: always using z's right child as the successor, and the moved-up child not turning black.
+I 20 200
+I 10 100
+I 40 400
+I 30 300
+I 50 500
+I 35 350
+X
+D 20
+X
+S 20
+S 30
+S 35
+P
+
+# successor is the right child of a non-root node: delete 40, successor 50, then delete case 2 (right).
+# expect: root 30 (B), children 10 (B), 50 (B); 35 (R) as 50's left child.
+# catches: x's parent not set to the successor, z's right subtree not relinked, and case 2 (right) mistakes.
+D 40
+X
+S 40
+S 50
+P
+D 10
+D 30
+D 35
+D 50
+P
+
+# successor deeper and a black leaf: delete 20, successor 30, then delete case 2 (left).
+# expect: root 30 (B), children 10 (B), 40 (B); 50 (R) as 40's right child.
+# catches: the fixup being skipped after a black successor is removed, and case 2 (left) not moving the extra black up.
+I 20 200
+I 10 100
+I 40 400
+I 30 300
+I 50 500
+I 35 350
+D 35
+X
+D 20
+X
+S 20
+S 30
+P
+D 10
+D 30
+D 40
+D 50
+P
+
+# successor three levels below the right child: delete 40, successor 50 sits under 60, 70 and 90.
+# expect: root 50 (B), children 20 (B), 90 (B); 70 (R) as 90's left child with children 60 (B) and 80 (B).
+# catches: z's left or right subtree not relinked to a deep successor, and always using z's right child as the successor.
+I 100 1000
+I 60 600
+I 90 900
+I 10 100
+I 20 200
+I 30 300
+I 40 400
+I 70 700
+I 80 800
+I 50 500
+X
+D 40
+X
+S 40
+S 50
+P
+D 10
+D 20
+D 30
+D 50
+D 60
+D 70
+D 80
+D 90
+D 100
+P
+
+# only a left child: delete 10, its red left child 5 moves up and turns black.
+# expect: root 20 (B), children 5 (B), 30 (B).
+# catches: a node with only a left child moving up the wrong (empty) side, and its red child not turning black.
+I 20 200
+I 10 100
+I 30 300
+I 5 50
+X
+D 10
+X
+S 10
+S 5
+P
+D 5
+D 20
+D 30
+P
+
+# only a left child at the root: delete 20, its red left child 10 becomes the black root.
+# expect: root 10 (B) alone.
+# catches: the same mistakes when the node is the root.
+I 20 200
+I 10 100
+D 20
+X
+S 10
+P
+D 10
+P
+
+# absent keys: deleting a key that is not in the tree changes nothing, also on an empty tree.
+# expect: root 20 (B), children 10 (R), 30 (R); S 15 absent.
+# catches: erase not checking that the key exists, which corrupts the tree or crashes.
+D 5
+I 20 200
+I 10 100
+I 30 300
+D 15
+D 25
+D 5
+D 35
+X
+S 15
+P
+D 10
+D 20
+D 30
+D 20
+P
+
+# delete the maximum until empty: build 15 keys, then always delete the largest key.
+# runs both one-child deletes and delete cases 1 to 4 (right). expect: a valid tree after every delete, ending empty.
+# catches: right-side delete fixup mistakes (wrong sibling, wrong rotation, wrong nephew, not moving up) and only-left-child deletes.
+I 140 1400
+I 40 400
+I 70 700
+I 90 900
+I 20 200
+I 100 1000
+I 150 1500
+I 10 100
+I 60 600
+I 110 1100
+I 120 1200
+I 30 300
+I 80 800
+I 130 1300
+I 50 500
+X
+D 150
+X
+P
+D 140
+X
+P
+D 130
+X
+P
+D 120
+X
+P
+D 110
+X
+P
+D 100
+X
+P
+D 90
+X
+P
+D 80
+X
+P
+D 70
+X
+P
+D 60
+X
+P
+D 50
+X
+P
+D 40
+X
+P
+D 30
+X
+P
+D 20
+X
+P
+D 10
+X
+P
+
+# delete the minimum until empty: same 15 keys, then always delete the smallest key.
+# runs delete cases 1 to 4 (left). expect: a valid tree after every delete, ending empty.
+# catches: left-side delete fixup mistakes (not refreshing the sibling, not moving up, not blackening the far nephew, not ending the loop).
+I 140 1400
+I 40 400
+I 70 700
+I 90 900
+I 20 200
+I 100 1000
+I 150 1500
+I 10 100
+I 60 600
+I 110 1100
+I 120 1200
+I 30 300
+I 80 800
+I 130 1300
+I 50 500
+X
+D 10
+X
+P
+D 20
+X
+P
+D 30
+X
+P
+D 40
+X
+P
+D 50
+X
+P
+D 60
+X
+P
+D 70
+X
+P
+D 80
+X
+P
+D 90
+X
+P
+D 100
+X
+P
+D 110
+X
+P
+D 120
+X
+P
+D 130
+X
+P
+D 140
+X
+P
+D 150
+X
+P
+
+# successor two levels below the right child and black: delete 40, successor 50 leaves an extra black under 60, fixed by delete case 3 then case 4 (left).
+# expect: root 50 (B), children 20 (B), 90 (B); 70 (R) as 90's left child with children 60 (B) and 80 (B).
+# catches: case 3 (left) not refreshing the sibling, case 4 (left) mistakes after a deep successor is removed, and a destructor that leaks.
+I 100 1000
+I 20 200
+I 90 900
+I 60 600
+I 10 100
+I 40 400
+I 30 300
+I 50 500
+I 80 800
+I 70 700
+X
+D 40
+X
+S 40
+S 50
+P
