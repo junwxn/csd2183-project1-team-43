@@ -1,5 +1,4 @@
 # AVL deletes where rotations cascade up to the root using fibbonacci-style trees
-# and balance 0 deletes
 
 
 # Testing LL cascading rotation after deletion, using left heavy fibbonacci-style
