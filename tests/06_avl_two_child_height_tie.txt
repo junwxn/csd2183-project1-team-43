@@ -1,0 +1,174 @@
+# AVL two-child deletes (customary successor) where the left subtree is taller, 
+# the right is taller, or they are tied
+
+# Test for avl tree where the left is taller so a rotation should be done
+# Before 20 : 10, 30 | 10 : 5, 15
+# Delete 20, successor 30 replaces root, 
+# left now taller by 2 so child 10 balanced = single right rotation
+# Expected 10 : 5, 30 | 30 : 15, -
+I 20 5
+I 10 10
+I 30 15
+I 5 20
+I 15 25
+X
+P
+S 20
+S 10
+S 30
+S 5
+S 15
+D 20
+P
+X
+S 20
+S 10
+S 30
+S 5
+S 15
+D 10
+D 30
+D 5
+D 15
+
+# Test for avl tree where the left is taller and the left child leans right
+# Before 20 : 10, 30 | 10 : -, 15
+# Delete 20, successor 30 replaces root
+# Left now taller by 2 and child 10 leans right -> LR double rotation
+# Expected 15 : 10, 30
+I 20 5
+I 10 10
+I 30 15
+I 15 20
+X
+P
+S 20
+S 10
+S 30
+S 15
+D 20
+P
+X
+S 20
+S 10
+S 30
+S 15
+D 10
+D 30
+D 15
+
+# Test for avl tree where the right is taller, successor two levels down
+# Before 20 : 10, 30 | 30 : 25, 35
+# Delete 20, successor 25 replaces root, 30 keeps only its right child
+# Right was taller so the shrink balances it no rotation should happen.
+# Expected 25 : 10, 30 | 30 : -, 35
+I 20 5
+I 10 10
+I 30 15
+I 25 20
+I 35 25
+X
+P
+S 20
+S 10
+S 30
+S 25
+S 35
+D 20
+P
+X
+S 20
+S 10
+S 30
+S 25
+S 35
+D 10
+D 30
+D 25
+D 35
+
+# Test for avl tree where the right is taller, successor is the right child
+# Before 20 : 10, 30 | 30 : -, 35
+# Delete 20, successor 30 has no left child, 35 moves up into its place
+# No rotation
+# Expected 30 : 10, 35
+I 20 5
+I 10 10
+I 30 15
+I 35 20
+X
+P
+S 20
+S 10
+S 30
+S 35
+D 20
+P
+X
+S 20
+S 10
+S 30
+S 35
+D 10
+D 30
+D 35
+
+# Test for avl tree where both subtrees are tied, small
+# Before 20 : 10, 30
+# Delete 20, successor 30 replaces root, right side becomes empty
+# Left now taller by 1, no rotation
+# Expected 30 : 10, -
+I 20 5
+I 10 10
+I 30 15
+X
+P
+S 20
+S 10
+S 30
+D 20
+P
+X
+S 20
+S 10
+S 30
+D 10
+D 30
+
+# Test for avl tree where both subtrees are tied, deeper
+# Before 20 : 10, 30 | 10 : 5, 15 | 30 : 25, 35
+# Delete 20, successor 25 replaces root, 30 keeps only its right child
+# Height stays the same, no rotation
+# Expected 25 : 10, 30 | 10 : 5, 15 | 30 : -, 35
+I 20 5
+I 10 10
+I 30 15
+I 5 20
+I 15 25
+I 25 30
+I 35 35
+X
+P
+S 20
+S 10
+S 30
+S 5
+S 15
+S 25
+S 35
+D 20
+P
+X
+S 20
+S 10
+S 30
+S 5
+S 15
+S 25
+S 35
+D 10
+D 30
+D 5
+D 15
+D 25
+D 35
