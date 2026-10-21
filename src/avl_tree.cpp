@@ -1,15 +1,12 @@
-// Your AVL tree. Every member function below is a stub that compiles but does
-// nothing useful yet; replace each one with your implementation.
-
 #include "avl_tree.h"
+// AVL tree with customary (successor) deletion for CSD2183 Project 1.
 
-// TODO: Add the members your implementation needs, such as the key, the
-// value, the height or balance factor, and links to the children.
+// Struct for AVLNode
 struct AVLNode {
   std::int64_t key{};
   std::int64_t value{};
   int height{};
-  AVLNode *left = nullptr, *right = nullptr, *parent = nullptr;
+  AVLNode *left = nullptr, *right = nullptr;
 };
 
 // Helper functions
@@ -74,6 +71,7 @@ namespace {
     return new_root;
   }
 
+  // AVL rotations and rebalancing learned from youtube videos (Michael Sambol)
   // Helper function rebalance() which will rebalance the node of the AVL tree 
   AVLNode *rebalance(AVLNode *curr) {
     update_height(curr);
@@ -189,11 +187,9 @@ namespace {
 }
 
 AVLTree::AVLTree() {
-  // TODO: Set up the tree, if anything is needed beyond an empty root.
 }
 
 AVLTree::~AVLTree() {
-  // TODO: Release all nodes.
   destroy(root_);
 }
 
